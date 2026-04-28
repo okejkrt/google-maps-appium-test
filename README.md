@@ -61,11 +61,72 @@ Před spuštěním testu je potřeba mít nainstalované:
 * Google Maps v emulátoru
 * Aktivní Android emulátor dostupný přes `adb`
 
-## Instalace Appia
+## Instalace Node.js
 
-Appium se instaluje přes npm:
+### macOS
+
+Doporučená varianta je instalace přes `nvm`:
 
 ```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.zshrc
+nvm install --lts
+nvm use --lts
+```
+
+Ověření:
+
+```bash
+node -v
+npm -v
+```
+
+### Windows
+
+Stáhněte a nainstalujte **Node.js LTS** z oficiální stránky:
+
+```text
+https://nodejs.org
+```
+
+Po instalaci otevřete nový PowerShell nebo Command Prompt a ověřte:
+
+```powershell
+node -v
+npm -v
+```
+
+### Linux
+
+Doporučená varianta je instalace přes `nvm`:
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.bashrc
+nvm install --lts
+nvm use --lts
+```
+
+Ověření:
+
+```bash
+node -v
+npm -v
+```
+
+## Instalace Appia
+
+Appium se instaluje přes npm.
+
+### macOS / Linux
+
+```bash
+npm install -g appium
+```
+
+### Windows
+
+```powershell
 npm install -g appium
 ```
 
@@ -75,9 +136,21 @@ Ověření instalace:
 appium -v
 ```
 
+Na Windows použijte v PowerShellu stejný příkaz:
+
+```powershell
+appium -v
+```
+
 Instalace Android driveru pro Appium:
 
 ```bash
+appium driver install uiautomator2
+```
+
+Na Windows:
+
+```powershell
 appium driver install uiautomator2
 ```
 
@@ -93,6 +166,120 @@ Ve výpisu by měl být dostupný driver:
 uiautomator2
 ```
 
+## Instalace Android Studia a Android SDK
+
+### macOS
+
+Nainstalujte Android Studio z:
+
+```text
+https://developer.android.com/studio
+```
+
+Po prvním spuštění projděte Setup Wizard a nainstalujte:
+
+* Android SDK
+* Android SDK Platform-Tools
+* Android Emulator
+* Android SDK Command-line Tools
+
+Nastavení proměnných prostředí v `~/.zshrc`:
+
+```bash
+echo 'export ANDROID_HOME=$HOME/Library/Android/sdk' >> ~/.zshrc
+echo 'export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk' >> ~/.zshrc
+echo 'export PATH=$PATH:$ANDROID_HOME/platform-tools' >> ~/.zshrc
+echo 'export PATH=$PATH:$ANDROID_HOME/emulator' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Ověření:
+
+```bash
+adb version
+emulator -version
+```
+
+### Windows
+
+Nainstalujte Android Studio z:
+
+```text
+https://developer.android.com/studio
+```
+
+Po prvním spuštění projděte Setup Wizard a nainstalujte:
+
+* Android SDK
+* Android SDK Platform-Tools
+* Android Emulator
+* Android SDK Command-line Tools
+
+Typická cesta k Android SDK na Windows je:
+
+```text
+C:\Users\<USER>\AppData\Local\Android\Sdk
+```
+
+Nastavte systémové proměnné prostředí:
+
+```text
+ANDROID_HOME=C:\Users\<USER>\AppData\Local\Android\Sdk
+ANDROID_SDK_ROOT=C:\Users\<USER>\AppData\Local\Android\Sdk
+```
+
+Do systémové proměnné `Path` přidejte:
+
+```text
+%ANDROID_HOME%\platform-tools
+%ANDROID_HOME%\emulator
+```
+
+Poté otevřete nový PowerShell a ověřte:
+
+```powershell
+adb version
+emulator -version
+```
+
+### Linux
+
+Nainstalujte Android Studio z:
+
+```text
+https://developer.android.com/studio
+```
+
+Po prvním spuštění projděte Setup Wizard a nainstalujte:
+
+* Android SDK
+* Android SDK Platform-Tools
+* Android Emulator
+* Android SDK Command-line Tools
+
+Typická cesta k Android SDK na Linuxu je:
+
+```text
+$HOME/Android/Sdk
+```
+
+Nastavení proměnných prostředí v `~/.bashrc`:
+
+```bash
+echo 'export ANDROID_HOME=$HOME/Android/Sdk' >> ~/.bashrc
+echo 'export ANDROID_SDK_ROOT=$HOME/Android/Sdk' >> ~/.bashrc
+echo 'export PATH=$PATH:$ANDROID_HOME/platform-tools' >> ~/.bashrc
+echo 'export PATH=$PATH:$ANDROID_HOME/emulator' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Ověření:
+
+```bash
+adb version
+emulator -version
+```
+
 ## Android emulátor
 
 Emulátor je možné vytvořit v Android Studiu přes:
@@ -106,12 +293,22 @@ Doporučené nastavení:
 ```text
 Device: běžný Pixel profil, například Pixel 7, Pixel 8 nebo podobný
 System image: Google Play image
-Architecture: arm64-v8a na Apple Silicon Macu
+Architecture:
+- macOS Apple Silicon: arm64-v8a
+- Windows/Linux Intel/AMD: x86_64
 ```
 
-Po spuštění emulátoru ověřte, že je dostupný přes ADB:
+Po spuštění emulátoru ověřte, že je dostupný přes ADB.
+
+### macOS / Linux
 
 ```bash
+adb devices
+```
+
+### Windows
+
+```powershell
 adb devices
 ```
 
@@ -124,8 +321,16 @@ emulator-5554   device
 
 Ověření, že je nainstalovaná aplikace Google Maps:
 
+### macOS / Linux
+
 ```bash
 adb shell pm list packages | grep maps
+```
+
+### Windows PowerShell
+
+```powershell
+adb shell pm list packages | Select-String maps
 ```
 
 Očekávaný výstup:
@@ -140,9 +345,17 @@ Ruční spuštění Google Maps:
 adb shell monkey -p com.google.android.apps.maps 1
 ```
 
+Na Windows:
+
+```powershell
+adb shell monkey -p com.google.android.apps.maps 1
+```
+
 ## Doporučené nastavení emulátoru
 
-Pro stabilnější běh UI testů je vhodné vypnout animace:
+Pro stabilnější běh UI testů je vhodné vypnout animace.
+
+### macOS / Linux / Windows
 
 ```bash
 adb shell settings put global window_animation_scale 0
@@ -150,7 +363,11 @@ adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
 ```
 
+Na Windows lze stejné příkazy spustit v PowerShellu.
+
 ## Instalace Python závislostí
+
+### macOS / Linux
 
 Ve složce projektu vytvořte virtuální prostředí:
 
@@ -182,13 +399,60 @@ A následně uložit:
 pip freeze > requirements.txt
 ```
 
+### Windows PowerShell
+
+Ve složce projektu vytvořte virtuální prostředí:
+
+```powershell
+python -m venv .venv
+```
+
+Aktivace virtuálního prostředí:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Pokud PowerShell blokuje spuštění aktivačního skriptu, spusťte:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Poté znovu aktivujte prostředí:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Instalace závislostí:
+
+```powershell
+pip install -r requirements.txt
+```
+
+Pokud `requirements.txt` ještě neexistuje:
+
+```powershell
+pip install Appium-Python-Client pytest pytest-html
+pip freeze > requirements.txt
+```
+
 ## Spuštění Appium serveru
 
 Před spuštěním testu musí běžet Appium server.
 
+### macOS / Linux
+
 V samostatném terminálu spusťte:
 
 ```bash
+appium
+```
+
+### Windows PowerShell
+
+```powershell
 appium
 ```
 
@@ -201,6 +465,8 @@ http://127.0.0.1:4723
 Tento terminál nechte běžet po celou dobu testu.
 
 ## Spuštění testu
+
+### macOS / Linux
 
 V druhém terminálu přejděte do root složky projektu:
 
@@ -220,13 +486,45 @@ Spusťte test:
 pytest -v
 ```
 
+### Windows PowerShell
+
+V druhém terminálu přejděte do root složky projektu, například:
+
+```powershell
+cd C:\Users\<USER>\Projects\google-maps-appium-test
+```
+
+Aktivujte virtuální prostředí:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Spusťte test:
+
+```powershell
+pytest -v
+```
+
 ## Spuštění testu s HTML reportem
+
+### macOS / Linux
 
 Pro vytvoření HTML reportu s unikátním názvem spusťte:
 
 ```bash
 mkdir -p reports
 pytest -v --html=reports/report_$(date +"%Y-%m-%d_%H-%M-%S").html --self-contained-html
+```
+
+### Windows PowerShell
+
+Pro vytvoření HTML reportu s unikátním názvem spusťte:
+
+```powershell
+New-Item -ItemType Directory -Force -Path reports
+$timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+pytest -v --html="reports/report_$timestamp.html" --self-contained-html
 ```
 
 Report se uloží například jako:
